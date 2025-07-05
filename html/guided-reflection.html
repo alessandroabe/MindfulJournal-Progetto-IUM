@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riflessione Guidata</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Main Content Area -->
+        <main class="main-content" id="guidedReflectionPage">
+            
+            <div class="page-header">
+                <a href="./home.html" class="page-back-arrow"><</a>
+                <h1 class="header-title">Riflessione guidata</h1>
+            </div>
+
+            <!-- The question will be inserted here by JS -->
+            <p class="prompt-text" id="guidedQuestion">Caricamento...</p>
+            
+            <div class="textarea-container">
+                <textarea id="guidedTextarea" class="reflectionTextarea" placeholder="La tua risposta..."></textarea>
+            </div>
+
+            <div class="navigation-buttons">
+                <!-- "Precedente" button, hidden by default -->
+                <button class="btn-secondary" id="prevQuestionBtn" style="display: none;">Precedente</button>
+                <!-- "Prossima" button -->
+                <button class="btn-secondary" id="nextQuestionBtn" disabled>Prossima</button>
+            </div>
+
+            <button class="btn-primary" id="saveGuidedAnswersBtn">Salva risposte</button>
+
+        </main>
+    </div>
+
+    <script src="../javascript/script.js"></script>
+</body>
+</html>

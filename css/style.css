@@ -1,0 +1,545 @@
+/* Basic Reset and Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: linear-gradient(180deg, #E0F2F1 0%, #FFFFFF 100%);
+    color: #004D40; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Authentication Container */
+.auth-container {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative; 
+}
+
+#loginPageContent,
+#registerPageContent {
+    justify-content: center;
+}
+
+.logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 24px;
+}
+
+.title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #00695C; 
+    margin-bottom: 40px;
+}
+
+/* Form Styles */
+.auth-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 25px; 
+}
+
+.auth-form input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #B2DFDB;
+    padding: 10px 5px;
+    font-size: 16px;
+    color: #004D40;
+}
+
+.auth-form input::placeholder {
+    color: #4DB6AC;
+}
+
+.auth-form input:focus {
+    outline: none;
+    border-bottom: 2px solid #00796B; 
+}
+
+/* Primary Button Style */
+.btn-primary {
+    background-color: #00796B;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 16px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 20px; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #00695C;
+}
+
+.bottom-link {
+    margin-top: 50px;
+    color: #004D40;
+}
+
+.bottom-link a {
+    color: #00796B;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* Phone-Like experience */
+.app-container {
+    width: 100%;
+    max-width: 420px;
+    height: 850px; 
+    max-height: 100vh;
+    background: linear-gradient(180deg, #E0F2F1 0%, #FFFFFF 100%);
+    border-radius: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    border: 8px solid #111; 
+}
+
+#entryView, #savedView {
+    flex-grow: 1;      
+    overflow-y: auto;  
+    display: flex;     
+    flex-direction: column;
+}
+
+body {
+    background: #f0f0f0; /* A neutral background for the "desktop" */
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 30px 25px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #00695C;
+    margin-bottom: 20px;
+}
+
+/* Mood & Context Selectors */
+.mood-selector {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
+}
+
+.mood-emoji {
+    font-size: 36px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+    transition: all 0.2s ease-in-out;
+}
+
+.mood-emoji.selected {
+    background-color: #B2DFDB;
+    transform: scale(1.2);
+}
+
+.context-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.context-btn {
+    background: white;
+    border: 1px solid #B2DFDB;
+    color: #00796B;
+    padding: 12px;
+    border-radius: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.context-btn.selected {
+    background-color: #00796B;
+    color: white;
+    border-color: #00796B;
+}
+
+/* Secondary Button Style */
+.btn-secondary {
+    background: transparent;
+    border: 1px solid #00796B;
+    color: #00796B;
+    border-radius: 50px;
+    padding: 16px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: auto; 
+    margin-bottom: 15px;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #E0F2F1;
+}
+
+/* Bottom Navigation Bar */
+.bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    padding: 15px 0;
+    background: white;
+    border-top: 1px solid #E0E0E0;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+}
+
+.nav-item {
+    color: #A0A0A0;
+    font-size: 24px;
+    text-decoration: none;
+}
+
+.nav-item.active {
+    color: #00796B; 
+}
+
+
+/* Modal Styles */
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: none; 
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal-content {
+    background: #F5FCFC;
+    padding: 30px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 350px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Saved Mood Screen Styles */
+.saved-mood-container {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.large-mood-emoji-container {
+    width: 150px;
+    height: 150px;
+    background-color: #00796B;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.large-mood-emoji {
+    font-size: 80px;
+}
+
+.saved-message {
+    font-size: 18px;
+    color: #004D40;
+    max-width: 80%;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    position: relative; 
+    padding-bottom: 15px;
+    border-bottom: 1px solid #B2DFDB;
+    margin-bottom: 20px;
+}
+
+.header-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #00695C;
+    margin: 0 auto; 
+}
+
+.prompt-text {
+    font-size: 16px;
+    color: #004D40;
+    margin-bottom: 15px;
+}
+
+.textarea-container {
+    flex-grow: 1; 
+    background-color: white;
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    display: flex; 
+    margin-bottom: 20px;
+}
+
+.reflectionTextarea {
+    width: 100%;
+    height: 100%;
+    border: none;
+    resize: none; 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    color: #333;
+    background-color: transparent;
+}
+
+.reflectionTextarea:focus {
+    outline: none;
+}
+
+#freeReflectionPage .btn-primary {
+    margin-top: auto; 
+}
+
+.page-back-arrow {
+    position: absolute;
+    top: 35px; 
+    left: 25px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #00796B;
+    text-decoration: none;
+    z-index: 10; 
+}
+
+.page-header > .page-back-arrow {
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+}
+
+.navigation-buttons {
+    display: flex;
+    justify-content: flex-end; 
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+#guidedReflectionPage .btn-primary {
+    margin-top: auto;
+}
+
+/* SOme styling for disabled buttons */
+.btn-secondary:disabled {
+    background-color: #E0E0E0;
+    color: #A0A0A0;
+    border-color: #E0E0E0;
+    cursor: not-allowed;
+}
+
+.history-header {
+    justify-content: center; 
+}
+
+.calendar-icon {
+    position: absolute;
+    right: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 22px;
+    color: #00796B;
+}
+
+.today-icon {
+    background-color: #00796B;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+}
+
+/* Cool little animation to make the calendar function a little more visible on first use */
+@keyframes glow {
+    0% { box-shadow: 0 0 3px #00796B; }
+    50% { box-shadow: 0 0 15px #4DB6AC; }
+    100% { box-shadow: 0 0 3px #00796B; }
+}
+.discover-glow {
+    animation: glow 1.5s infinite ease-in-out;
+    border-radius: 6px; 
+}
+
+.day-navigator {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+    font-size: 18px;
+    font-weight: 500;
+    color: #004D40;
+}
+
+.nav-arrow {
+    font-size: 24px;
+    font-weight: bold;
+    color: #00796B;
+    text-decoration: none;
+    padding: 0 15px;
+}
+
+/* Daily View */
+.entry-display {
+    text-align: center;
+}
+.entry-display .large-mood-emoji-container {
+    margin: 10px auto 20px auto;
+}
+.context-display {
+    font-size: 20px;
+    font-weight: 500;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #B2DFDB;
+}
+.reflection-display {
+    text-align: left;
+}
+.reflection-display h3 {
+    margin-bottom: 10px;
+    color: #004D40;
+}
+.reflection-display p, .reflection-display .view-guided-btn {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+}
+.view-guided-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+.no-entry-display {
+    text-align: center;
+    margin-top: 50px;
+    color: #4DB6AC;
+}
+.no-entry-display .btn-primary {
+    margin-top: 20px;
+}
+
+/* Monthly view */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    text-align: center;
+}
+.day-name {
+    font-weight: bold;
+    color: #00796B;
+    padding-bottom: 10px;
+}
+.day-cell {
+    padding: 5px;
+    font-size: 16px;
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+}
+.day-cell.other-month {
+    color: #BDBDBD;
+}
+.day-cell.has-entry a {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+.day-cell .mood-icon {
+    font-size: 20px;
+}
+
+.day-cell a {
+    text-decoration: none;
+    color: inherit; 
+}
+
+.calendar-grid {
+    border-top: 1px solid #B2DFDB; 
+}
+
+.day-cell {
+    border-bottom: 1px solid #B2DFDB;
+    border-left: 1px solid #B2DFDB;
+}
+
+.calendar-grid .day-cell:nth-child(7n) {
+    border-right: 1px solid #B2DFDB;
+}
+
+.calendar-grid .day-cell:nth-child(7n + 1) {
+    border-left: none;
+}
+
+.day-cell.future-date {
+    color: #BDBDBD; /* Gray out the text */
+}
+
+.day-cell.future-date a {
+    pointer-events: none;
+    cursor: default;
+}
+
+.day-cell.today {
+    background-color: #E0F2F1;
+    border-radius: 4px;
+    font-weight: bold;
+}

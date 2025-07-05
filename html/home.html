@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Come ti senti?</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+            <div id="entryView">
+        <!-- Main Content Area - ID is now here -->
+        <main class="main-content" id="homePage">
+            <h2 class="page-title">Come ti senti?</h2>
+            <div class="mood-selector">
+                <button class="mood-emoji">😭</button>
+                <button class="mood-emoji">😕</button>
+                <button class="mood-emoji">😐</button>
+                <button class="mood-emoji">🙂</button>
+                <button class="mood-emoji">😁</button>
+            </div>
+
+            <h2 class="page-title">Contesto:</h2>
+            <div class="context-selector">
+                <button class="context-btn">Lavoro</button>
+                <button class="context-btn">Studio</button>
+                <button class="context-btn">Scuola</button>
+                <button class="context-btn">Amicizia</button>
+                <button class="context-btn">Finanze</button>
+                <button class="context-btn">Amore</button>
+            </div>
+
+            <button class="btn-secondary" id="writeReflectionBtn">Scrivi una riflessione</button>
+            <button class="btn-primary" id="saveMoodBtn">Salva</button>
+        </main>
+
+    <div id="reflectionModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="page-title">Scegli in che modo scriverla:</h2>
+            <button class="btn-primary">Scrittura Libera</button>
+            <button class="btn-primary">Scrittura guidata</button>
+            <button class="btn-secondary" id="cancelModalBtn">Annulla</button>
+        </div>
+    </div>
+    </div>
+    
+    <!-- View shown when user has already logged an emotion for the day -->
+    <div id="savedView" style="display: none;">
+        <main class="main-content saved-mood-container" id="savedHomePage">
+            <h2 class="page-title">Mood di oggi:</h2>
+            
+            <div class="large-mood-emoji-container">
+                <span class="large-mood-emoji" id="savedMoodEmoji">😊</span>
+            </div>
+            
+            <p class="saved-message">Ben fatto. Prenderti un momento per te è il primo passo per stare meglio.</p>
+        </main>
+    </div>
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active">
+                <i class="fas fa-home"></i>
+            </a>
+            <a href="./history.html" class="nav-item">
+                <i class="fas fa-book-open"></i>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-user"></i>
+            </a>
+        </nav>
+    </div>
+    <script src="../javascript/script.js"></script>
+</body>
+</html>
