@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Area Utente</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <main class="main-content" id="userProfilePage">
+            <h2 class="page-title">Area utente</h2>
+            
+            <div class="profile-pic-container" id="profilePicContainer">
+                <i class="fas fa-user default-user-icon" id="defaultUserIcon"></i>
+                <img src="" alt="Immagine Profilo" class="profile-pic" id="profilePicImg">
+                <div class="edit-pic-overlay" id="editPicOverlay">
+                    <i class="fas fa-camera"></i>
+                </div>
+            </div>
+            <input type="file" id="profilePicInput" accept="image/*" style="display: none;">
+
+
+            <div class="profile-details" id="profileDetailsContainer">
+                <!-- User details will be rendered by JS -->
+            </div>
+
+            <button class="btn-primary" id="editProfileBtn">Modifica</button>
+
+        </main>
+        <nav class="bottom-nav">
+            <a href="./home.html" class="nav-item">
+                <i class="fas fa-home"></i>
+            </a>
+            <a href="./history.html" class="nav-item">
+                <i class="fas fa-book-open"></i>
+            </a>
+            <a href="./user-profile.html" class="nav-item active">
+                <i class="fas fa-user"></i>
+            </a>
+        </nav>
+    </div>
+    <script src="../javascript/script.js"></script>
+</body>
+</html>
