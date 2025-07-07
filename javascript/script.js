@@ -3,6 +3,37 @@ function navigateTo(page) {
     window.location.href = page;
 }
 
+// Custom App-like Toast Notification
+function showToast(message) {
+    const existingToast = document.querySelector('.app-toast');
+    if (existingToast) {
+        existingToast.remove();
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'app-toast';
+    toast.textContent = message;
+
+    const appContainer = document.querySelector('.app-container');
+    if (appContainer) {
+        appContainer.appendChild(toast);
+    } else {
+        document.body.appendChild(toast);
+        toast.style.position = 'fixed'; // Fallback for pages without app-container
+    }
+
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 10);
+
+    // Increased duration to 4 seconds
+    setTimeout(() => {
+        toast.classList.remove('show');
+        toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+    }, 5000);
+}
+
+
 // mock db manager
 const entryManager = {
     getTodayDate: () => new Date(),
@@ -40,6 +71,29 @@ const entryManager = {
     }
 };
 
+const userProfileManager = {
+    _userKey: 'app_user_profile',
+    getUser: function() {
+        const storedUser = localStorage.getItem(this._userKey);
+        if (storedUser) {
+            return JSON.parse(storedUser);
+        }
+        // Default mock user WITHOUT a profile picture
+        const mockUser = {
+            firstName: 'Dexter',
+            lastName: 'Morgan',
+            dob: '01/02/1971',
+            email: 'dexter@gmail.com',
+            profilePic: null // Explicitly null
+        };
+        this.saveUser(mockUser);
+        return mockUser;
+    },
+    saveUser: function(userData) {
+        localStorage.setItem(this._userKey, JSON.stringify(userData));
+    }
+};
+
 // Page Initializers
 document.addEventListener('DOMContentLoaded', () => {
     entryManager.seedMockData();
@@ -48,12 +102,12 @@ document.addEventListener('DOMContentLoaded', () => {
         case 'loginPageContent': initLoginPage(); break;
         case 'registerPageContent': initRegisterPage(); break;
         case 'homePage': initHomePage(); break;
-        // initSavedHomePage is removed
         case 'freeReflectionPage': initFreeReflectionPage(); break;
         case 'guidedReflectionPage': initGuidedReflectionPage(); break;
         case 'historyPage': initHistoryPage(); break;
         case 'calendarPage': initCalendarPage(); break;
         case 'viewGuidedReflectionPage': initViewGuidedReflectionPage(); break;
+        case 'userProfilePage': initUserProfilePage(); break;
     }
 });
 
@@ -70,7 +124,6 @@ function initHomePage() {
     const todayString = entryManager.getTodayDateString();
     let existingEntry = entryManager.getEntryByDate(todayString);
 
-    // Function to switch views
     function updateView() {
         if (existingEntry) {
             entryView.style.display = 'none';
@@ -82,10 +135,8 @@ function initHomePage() {
         }
     }
 
-    // Initial check
     updateView();
-
-    // Entry View Logic (only runs if entryView is visible) 
+ 
     const moodEmojis = document.querySelectorAll('.mood-emoji');
     const contextBtns = document.querySelectorAll('.context-btn');
     const writeReflectionBtn = document.getElementById('writeReflectionBtn');
@@ -95,7 +146,8 @@ function initHomePage() {
     const freeWriteBtn = reflectionModal.querySelector('.btn-primary:nth-of-type(1)');
     const guidedWriteBtn = reflectionModal.querySelector('.btn-primary:nth-of-type(2)');
 
-    if (localStorage.getItem('session_freeReflection') || localStorage.getItem('session_guidedReflection')) {
+    // Change button text if a reflection has already been started in this session
+    if (sessionStorage.getItem('session_freeReflectionText') || sessionStorage.getItem('session_guidedReflection')) {
         writeReflectionBtn.textContent = 'Modifica riflessione';
     }
 
@@ -103,30 +155,43 @@ function initHomePage() {
         emoji.addEventListener('click', () => {
             moodEmojis.forEach(e => e.classList.remove('selected'));
             emoji.classList.add('selected');
+            // Enable buttons once a mood is selected
+            writeReflectionBtn.disabled = false;
+            saveMoodBtn.disabled = false;
         });
     });
 
     contextBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            contextBtns.forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
+            // Allow multiple selections by toggling the 'selected' class
+            if (btn.classList.contains('selected')) {
+                 btn.classList.remove('selected');
+            } else {
+                contextBtns.forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+            }
         });
     });
 
     writeReflectionBtn.addEventListener('click', () => reflectionModal.style.display = 'flex');
     cancelModalBtn.addEventListener('click', () => reflectionModal.style.display = 'none');
-    freeWriteBtn.addEventListener('click', () => navigateTo('./free-reflection.html'));
-    guidedWriteBtn.addEventListener('click', () => navigateTo('./guided-reflection.html'));
+    
+    const setSessionDataAndNavigate = (page) => {
+        const selectedMood = document.querySelector('.mood-emoji.selected');
+        const selectedContext = document.querySelector('.context-btn.selected');
+        sessionStorage.setItem('session_mood', selectedMood.textContent);
+        sessionStorage.setItem('session_context', selectedContext ? selectedContext.textContent : '');
+        navigateTo(page);
+    };
 
+    freeWriteBtn.addEventListener('click', () => setSessionDataAndNavigate('./free-reflection.html'));
+    guidedWriteBtn.addEventListener('click', () => setSessionDataAndNavigate('./guided-reflection.html'));
+
+    // This button now only saves the mood/context for users who don't write a reflection.
     saveMoodBtn.addEventListener('click', () => {
         const selectedMood = document.querySelector('.mood-emoji.selected');
         const selectedContext = document.querySelector('.context-btn.selected');
         
-        if (!selectedMood) {
-            alert('Per favore, seleziona un mood prima di salvare.');
-            return;
-        }
-
         const newEntry = {
             date: todayString,
             mood: selectedMood.textContent,
@@ -135,33 +200,167 @@ function initHomePage() {
             reflectionContent: ''
         };
         
-        const freeText = localStorage.getItem('session_freeReflection');
-        const guidedText = localStorage.getItem('session_guidedReflection');
-        
-        if (freeText) {
-            newEntry.reflectionType = 'free';
-            newEntry.reflectionContent = freeText;
-        } else if (guidedText) {
-            newEntry.reflectionType = 'guided';
-            newEntry.reflectionContent = JSON.parse(guidedText);
-        }
-        
         entryManager.saveEntry(newEntry);
-        existingEntry = newEntry; // Update the local state
-
-        // Clean up session storage
-        localStorage.removeItem('session_freeReflection');
-        localStorage.removeItem('session_guidedReflection');
+        existingEntry = newEntry; 
         
-        // Update the view instantly instead of navigating
         updateView();
     });
 }
 
 
-// ... (Rest of the functions from initFreeReflectionPage to initViewGuidedReflectionPage)
-function initFreeReflectionPage() { const saveReflectionBtn = document.getElementById('saveReflectionBtn'); const textarea = document.getElementById('reflectionTextarea'); const savedText = localStorage.getItem('session_freeReflection'); if(savedText) textarea.value = savedText; saveReflectionBtn.addEventListener('click', () => { localStorage.setItem('session_freeReflection', textarea.value); alert('Riflessione salvata!'); navigateTo('./home.html'); }); }
-function initGuidedReflectionPage() { const allQuestions=["Se il tuo umore di oggi fosse un tempo meteorologico, che tempo farebbe dentro di te?","Se la tua energia di oggi fosse un colore, quale sarebbe e perché?","Cosa stai portando sulle spalle oggi? Un peso o una spinta?","Se la tua mente oggi fosse una stanza, che rumore ci sarebbe dentro?","Qual è una piccola cosa che ti ha dato gioia oggi, anche se per un solo istante?","C'è qualcosa che la tua versione futura ti direbbe di fare (o non fare) oggi?","Descrivi un sentimento che provi in questo momento usando tre parole non correlate."]; let availableQuestions=[...allQuestions]; let userAnswers=[]; let currentQuestionIndex=0; const questionEl=document.getElementById('guidedQuestion'); const textareaEl=document.getElementById('guidedTextarea'); const prevBtn=document.getElementById('prevQuestionBtn'); const nextBtn=document.getElementById('nextQuestionBtn'); const saveBtn=document.getElementById('saveGuidedAnswersBtn'); function loadQuestion(index){if(index>=userAnswers.length){if(availableQuestions.length===0)availableQuestions=[...allQuestions];const randomIndex=Math.floor(Math.random()*availableQuestions.length);const newQuestion=availableQuestions.splice(randomIndex,1)[0];userAnswers.push({question:newQuestion,answer:''});} const currentData=userAnswers[index]; questionEl.textContent=currentData.question; textareaEl.value=currentData.answer; updateButtons(); validateTextarea();} function updateButtons(){prevBtn.style.display=currentQuestionIndex>0?'inline-block':'none';const isLastQuestion=currentQuestionIndex===userAnswers.length-1&&userAnswers.length===allQuestions.length; nextBtn.style.display=isLastQuestion?'none':'inline-block';} function validateTextarea(){const minChars=5; nextBtn.disabled=textareaEl.value.trim().length<minChars;} textareaEl.addEventListener('input',()=>{userAnswers[currentQuestionIndex].answer=textareaEl.value; validateTextarea();}); nextBtn.addEventListener('click',()=>{if(nextBtn.disabled)return;currentQuestionIndex++;loadQuestion(currentQuestionIndex);}); prevBtn.addEventListener('click',()=>{if(currentQuestionIndex>0){currentQuestionIndex--;loadQuestion(currentQuestionIndex);}}); saveBtn.addEventListener('click',()=>{const finalAnswers=userAnswers.filter(a=>a.answer.trim()!=='');if(finalAnswers.length===0){alert("Non hai risposto a nessuna domanda.");return;} localStorage.setItem('session_guidedReflection',JSON.stringify(finalAnswers));alert('Risposte salvate!');navigateTo('./home.html');}); const savedSession=localStorage.getItem('session_guidedReflection');if(savedSession){userAnswers=JSON.parse(savedSession);const answeredTexts=userAnswers.map(a=>a.question);availableQuestions=allQuestions.filter(q=>!answeredTexts.includes(q));} loadQuestion(0); }
+function initFreeReflectionPage() {
+    const saveReflectionBtn = document.getElementById('saveReflectionBtn');
+    const textarea = document.getElementById('reflectionTextarea');
+    
+    // Check for text saved in the current session (if user navigates back and forth)
+    const savedText = sessionStorage.getItem('session_freeReflectionText');
+    if (savedText) {
+        textarea.value = savedText;
+    }
+
+    // Save text to session storage on input to prevent data loss on accidental navigation
+    textarea.addEventListener('input', () => {
+        sessionStorage.setItem('session_freeReflectionText', textarea.value);
+    });
+
+    saveReflectionBtn.addEventListener('click', () => {
+        const mood = sessionStorage.getItem('session_mood');
+        const context = sessionStorage.getItem('session_context');
+        const reflectionContent = textarea.value;
+
+        if (!mood) {
+            showToast('Errore: Mood non trovato. Riprova.');
+            setTimeout(() => navigateTo('./home.html'), 1500);
+            return;
+        }
+
+        if (reflectionContent.trim() === '') {
+            showToast('Scrivi una riflessione per salvare.');
+            return;
+        }
+
+        const newEntry = {
+            date: entryManager.getTodayDateString(),
+            mood: mood,
+            context: context || '',
+            reflectionType: 'free',
+            reflectionContent: reflectionContent
+        };
+
+        entryManager.saveEntry(newEntry);
+
+        // Clean up all temporary session data
+        sessionStorage.removeItem('session_mood');
+        sessionStorage.removeItem('session_context');
+        sessionStorage.removeItem('session_freeReflectionText');
+
+        showToast('Voce salvata con successo!');
+        setTimeout(() => navigateTo('./home.html'), 500);
+    });
+}
+
+function initGuidedReflectionPage() {
+    const allQuestions = ["Se il tuo umore di oggi fosse un tempo meteorologico, che tempo farebbe dentro di te?", "Se la tua energia di oggi fosse un colore, quale sarebbe e perché?", "Cosa stai portando sulle spalle oggi? Un peso o una spinta?", "Se la tua mente oggi fosse una stanza, che rumore ci sarebbe dentro?", "Qual è una piccola cosa che ti ha dato gioia oggi, anche se per un solo istante?", "C'è qualcosa che la tua versione futura ti direbbe di fare (o non fare) oggi?", "Descrivi un sentimento che provi in questo momento usando tre parole non correlate."];
+    let availableQuestions = [...allQuestions];
+    let userAnswers = [];
+    let currentQuestionIndex = 0;
+
+    const questionEl = document.getElementById('guidedQuestion');
+    const textareaEl = document.getElementById('guidedTextarea');
+    const prevBtn = document.getElementById('prevQuestionBtn');
+    const nextBtn = document.getElementById('nextQuestionBtn');
+    const saveBtn = document.getElementById('saveGuidedAnswersBtn');
+
+    function saveSessionAnswers() {
+        sessionStorage.setItem('session_guidedReflection', JSON.stringify(userAnswers));
+    }
+
+    function loadQuestion(index) {
+        if (index >= userAnswers.length) {
+            if (availableQuestions.length === 0) availableQuestions = [...allQuestions];
+            const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+            const newQuestion = availableQuestions.splice(randomIndex, 1)[0];
+            userAnswers.push({ question: newQuestion, answer: '' });
+        }
+        const currentData = userAnswers[index];
+        questionEl.textContent = currentData.question;
+        textareaEl.value = currentData.answer;
+        updateButtons();
+        validateTextarea();
+    }
+
+    function updateButtons() {
+        prevBtn.style.display = currentQuestionIndex > 0 ? 'inline-block' : 'none';
+        const isLastQuestion = currentQuestionIndex === userAnswers.length - 1 && userAnswers.length === allQuestions.length;
+        nextBtn.style.display = isLastQuestion ? 'none' : 'inline-block';
+    }
+
+    function validateTextarea() {
+        const minChars = 5;
+        nextBtn.disabled = textareaEl.value.trim().length < minChars;
+    }
+
+    textareaEl.addEventListener('input', () => {
+        userAnswers[currentQuestionIndex].answer = textareaEl.value;
+        saveSessionAnswers();
+        validateTextarea();
+    });
+
+    nextBtn.addEventListener('click', () => {
+        if (nextBtn.disabled) return;
+        currentQuestionIndex++;
+        loadQuestion(currentQuestionIndex);
+    });
+
+    prevBtn.addEventListener('click', () => {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            loadQuestion(currentQuestionIndex);
+        }
+    });
+
+    saveBtn.addEventListener('click', () => {
+        const finalAnswers = userAnswers.filter(a => a.answer.trim() !== '');
+        if (finalAnswers.length === 0) {
+            showToast("Non hai risposto a nessuna domanda.");
+            return;
+        }
+        
+        const mood = sessionStorage.getItem('session_mood');
+        const context = sessionStorage.getItem('session_context');
+
+        if (!mood) {
+            showToast('Errore: Mood non trovato. Riprova.');
+            setTimeout(() => navigateTo('./home.html'), 1500);
+            return;
+        }
+
+        const newEntry = {
+            date: entryManager.getTodayDateString(),
+            mood: mood,
+            context: context || '',
+            reflectionType: 'guided',
+            reflectionContent: finalAnswers
+        };
+
+        entryManager.saveEntry(newEntry);
+        
+        sessionStorage.removeItem('session_mood');
+        sessionStorage.removeItem('session_context');
+        sessionStorage.removeItem('session_guidedReflection');
+        
+        showToast('Voce salvata con successo!');
+        setTimeout(() => navigateTo('./home.html'), 500);
+    });
+
+    const savedSession = sessionStorage.getItem('session_guidedReflection');
+    if (savedSession) {
+        userAnswers = JSON.parse(savedSession);
+        const answeredTexts = userAnswers.map(a => a.question);
+        availableQuestions = allQuestions.filter(q => !answeredTexts.includes(q));
+    }
+    loadQuestion(0);
+}
 function initHistoryPage() {
     if (!localStorage.getItem('hasVisitedHistory')) { document.getElementById('calendarIcon').classList.add('discover-glow'); localStorage.setItem('hasVisitedHistory', 'true'); }
     const dateDisplay = document.getElementById('currentDateDisplay');
@@ -260,4 +459,112 @@ function initViewGuidedReflectionPage() {
     prevBtn.addEventListener('click', () => { if(currentIndex > 0) { currentIndex--; loadAnswer(currentIndex); }});
     nextBtn.addEventListener('click', () => { if(currentIndex < answers.length - 1) { currentIndex++; loadAnswer(currentIndex); }});
     loadAnswer(0);
+}
+
+function initUserProfilePage() {
+    const detailsContainer = document.getElementById('profileDetailsContainer');
+    const editBtn = document.getElementById('editProfileBtn');
+    const profilePicImg = document.getElementById('profilePicImg');
+    const defaultUserIcon = document.getElementById('defaultUserIcon');
+    const editPicOverlay = document.getElementById('editPicOverlay');
+    const profilePicInput = document.getElementById('profilePicInput');
+
+    let isEditing = false;
+    let currentUserData = userProfileManager.getUser();
+    let newProfilePicData = null; // Temp holder for new image base64 data
+
+    const fields = [
+        { key: 'firstName', label: 'Nome' },
+        { key: 'lastName', label: 'Cognome' },
+        { key: 'dob', label: 'Data di nascita' },
+        { key: 'email', label: 'Email', type: 'email' }
+    ];
+
+    function renderProfile() {
+        // Render text fields
+        detailsContainer.innerHTML = ''; 
+        fields.forEach(field => {
+            const fieldDiv = document.createElement('div');
+            fieldDiv.className = 'profile-field';
+            
+            const labelSpan = document.createElement('span');
+            labelSpan.className = 'profile-label';
+            labelSpan.textContent = field.label;
+            
+            fieldDiv.appendChild(labelSpan);
+
+            if (isEditing) {
+                const input = document.createElement('input');
+                input.type = field.type || 'text';
+                input.value = currentUserData[field.key];
+                input.dataset.key = field.key;
+                fieldDiv.appendChild(input);
+            } else {
+                const valueSpan = document.createElement('span');
+                valueSpan.className = 'profile-value';
+                valueSpan.textContent = currentUserData[field.key];
+                fieldDiv.appendChild(valueSpan);
+            }
+            detailsContainer.appendChild(fieldDiv);
+        });
+
+        // Render profile picture
+        const picData = newProfilePicData || currentUserData.profilePic;
+        if (picData) {
+            profilePicImg.src = picData;
+            profilePicImg.style.display = 'block';
+            defaultUserIcon.style.display = 'none';
+        } else {
+            profilePicImg.style.display = 'none';
+            profilePicImg.src = '';
+            defaultUserIcon.style.display = 'block';
+        }
+
+        // Update button and edit overlay
+        editBtn.textContent = isEditing ? 'Salva' : 'Modifica';
+        editPicOverlay.style.display = isEditing ? 'flex' : 'none';
+    }
+
+    function saveChanges() {
+        const inputs = detailsContainer.querySelectorAll('input');
+        const updatedData = { ...currentUserData };
+        
+        inputs.forEach(input => {
+            updatedData[input.dataset.key] = input.value;
+        });
+
+        if (newProfilePicData) {
+            updatedData.profilePic = newProfilePicData;
+        }
+        
+        currentUserData = updatedData;
+        userProfileManager.saveUser(currentUserData);
+        newProfilePicData = null; // Reset temp holder after saving
+    }
+
+    editBtn.addEventListener('click', () => {
+        if (isEditing) {
+            saveChanges();
+        }
+        isEditing = !isEditing;
+        renderProfile();
+    });
+
+    editPicOverlay.addEventListener('click', () => {
+        profilePicInput.click();
+    });
+
+    profilePicInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                newProfilePicData = e.target.result;
+                renderProfile(); // Re-render to show the new picture immediately
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    renderProfile();
 }
