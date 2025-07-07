@@ -84,11 +84,19 @@ body {
     cursor: pointer;
     margin-top: 20px; 
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+    text-decoration: none; /* Remove underline from <a> tags */
+    display: inline-block; /* Ensure <a> tags behave like buttons */
 }
 
 .btn-primary:hover {
     background-color: #00695C;
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
 }
 
 .bottom-link {
@@ -207,6 +215,14 @@ body {
 
 .btn-secondary:hover {
     background-color: #E0F2F1;
+}
+
+/* SOme styling for disabled buttons */
+.btn-secondary:disabled {
+    background-color: #E0E0E0;
+    color: #A0A0A0;
+    border-color: #E0E0E0;
+    cursor: not-allowed;
 }
 
 /* Bottom Navigation Bar */
@@ -363,14 +379,6 @@ body {
 
 #guidedReflectionPage .btn-primary {
     margin-top: auto;
-}
-
-/* SOme styling for disabled buttons */
-.btn-secondary:disabled {
-    background-color: #E0E0E0;
-    color: #A0A0A0;
-    border-color: #E0E0E0;
-    cursor: not-allowed;
 }
 
 .history-header {
@@ -530,7 +538,7 @@ body {
 }
 
 .day-cell.future-date {
-    color: #BDBDBD; /* Gray out the text */
+    color: #BDBDBD; 
 }
 
 .day-cell.future-date a {
@@ -542,4 +550,128 @@ body {
     background-color: #E0F2F1;
     border-radius: 4px;
     font-weight: bold;
+}
+
+/* User Profile page Styles */
+#userProfilePage {
+    align-items: center;
+    text-align: center;
+}
+
+.profile-pic-container {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border: 3px solid white;
+    position: relative;
+    background-color: #B2DFDB;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-pic {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none; 
+}
+
+.default-user-icon {
+    font-size: 60px;
+    color: #00796B;
+}
+
+.edit-pic-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 35%;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    display: none; 
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.edit-pic-overlay:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+
+.profile-details {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.profile-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 5px;
+    border-bottom: 1px solid #B2DFDB;
+    text-align: left;
+}
+
+.profile-label {
+    font-weight: 500;
+    color: #00695C;
+}
+
+.profile-value {
+    color: #004D40;
+}
+
+.profile-field input {
+    flex-grow: 1;
+    border: none;
+    background: transparent;
+    text-align: right;
+    font-size: 16px;
+    color: #004D40;
+    padding: 5px;
+}
+
+.profile-field input:focus {
+    outline: none;
+    background-color: #E0F2F1;
+    border-radius: 5px;
+}
+
+#userProfilePage .btn-primary {
+    width: 100%;
+    margin-top: auto;
+}
+
+/* Custom tost Notification */
+.app-toast {
+    position: absolute;
+    bottom: 80px; 
+    left: 50%;
+    transform: translateX(-50%) translateY(200%); 
+    background-color: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    z-index: 2000;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.app-toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
 }
