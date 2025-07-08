@@ -60,4 +60,4 @@ Abbiamo sviluppato un prototipo interattivo su Figma:
 ---
 
 > Progetto per il corso di Interazione Uomo-Macchina (IUM).  
-> Team: [inserisci nomi membri team]
+> Team: Abeille Alessandro, Amorelli Domenico, Bianco Christian, Ercole Achille
