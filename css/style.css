@@ -371,10 +371,18 @@ body {
 }
 
 .navigation-buttons {
-    display: flex;
-    justify-content: flex-end; 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
     gap: 10px;
     margin-bottom: 15px;
+}
+
+#prevQuestionBtn, #viewPrevBtn {
+    grid-column: 1;
+}
+
+#nextQuestionBtn, #viewNextBtn {
+    grid-column: 2;
 }
 
 #guidedReflectionPage .btn-primary {
@@ -640,6 +648,7 @@ body {
     font-size: 16px;
     color: #004D40;
     padding: 5px;
+    font-family: inherit;
 }
 
 .profile-field input:focus {
@@ -675,3 +684,4 @@ body {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
 }
+

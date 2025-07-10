@@ -19,18 +19,17 @@ function showToast(message) {
         appContainer.appendChild(toast);
     } else {
         document.body.appendChild(toast);
-        toast.style.position = 'fixed'; // Fallback for pages without app-container
+        toast.style.position = 'fixed'; 
     }
 
     setTimeout(() => {
         toast.classList.add('show');
     }, 10);
 
-    // Increased duration to 4 seconds
     setTimeout(() => {
         toast.classList.remove('show');
         toast.addEventListener('transitionend', () => toast.remove(), { once: true });
-    }, 5000);
+    }, 10000);
 }
 
 
@@ -471,7 +470,7 @@ function initUserProfilePage() {
 
     let isEditing = false;
     let currentUserData = userProfileManager.getUser();
-    let newProfilePicData = null; // Temp holder for new image base64 data
+    let newProfilePicData = null;
 
     const fields = [
         { key: 'firstName', label: 'Nome' },
@@ -481,8 +480,9 @@ function initUserProfilePage() {
     ];
 
     function renderProfile() {
-        // Render text fields
-        detailsContainer.innerHTML = ''; 
+        detailsContainer.innerHTML = '';
+        let dobInput = null; 
+
         fields.forEach(field => {
             const fieldDiv = document.createElement('div');
             fieldDiv.className = 'profile-field';
@@ -498,6 +498,11 @@ function initUserProfilePage() {
                 input.type = field.type || 'text';
                 input.value = currentUserData[field.key];
                 input.dataset.key = field.key;
+
+                if (field.key === 'dob') {
+                    dobInput = input;
+                }
+
                 fieldDiv.appendChild(input);
             } else {
                 const valueSpan = document.createElement('span');
@@ -508,7 +513,14 @@ function initUserProfilePage() {
             detailsContainer.appendChild(fieldDiv);
         });
 
-        // Render profile picture
+        if (isEditing && dobInput) {
+            flatpickr(dobInput, {
+                dateFormat: "d/m/Y", 
+                locale: "it",      
+                allowInput: true,  
+            });
+        }
+
         const picData = newProfilePicData || currentUserData.profilePic;
         if (picData) {
             profilePicImg.src = picData;
@@ -520,7 +532,6 @@ function initUserProfilePage() {
             defaultUserIcon.style.display = 'block';
         }
 
-        // Update button and edit overlay
         editBtn.textContent = isEditing ? 'Salva' : 'Modifica';
         editPicOverlay.style.display = isEditing ? 'flex' : 'none';
     }
@@ -539,7 +550,7 @@ function initUserProfilePage() {
         
         currentUserData = updatedData;
         userProfileManager.saveUser(currentUserData);
-        newProfilePicData = null; // Reset temp holder after saving
+        newProfilePicData = null;
     }
 
     editBtn.addEventListener('click', () => {
@@ -560,7 +571,7 @@ function initUserProfilePage() {
             const reader = new FileReader();
             reader.onload = (e) => {
                 newProfilePicData = e.target.result;
-                renderProfile(); // Re-render to show the new picture immediately
+                renderProfile();
             };
             reader.readAsDataURL(file);
         }
